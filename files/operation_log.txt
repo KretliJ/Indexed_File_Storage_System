@@ -1,0 +1,45 @@
+[2025-11-07 16:30:15] [INFO] - Verificação OK: 'files\funcionarios.dat' está ordenado.
+[2025-11-07 16:30:15] [INFO] - Verificação OK: 'files\pacientes.dat' está ordenado.
+[2025-11-07 16:30:15] [INFO] - Verificação OK: 'files\vacinas.dat' está ordenado.
+[2025-11-07 16:30:15] [INFO] - Verificação OK: 'files\aplicacoes.dat' está ordenado.
+[2025-11-07 16:35:43] [ERRO] - Verificação falhou: 'files\funcionarios.dat' está DESORDENADO.
+[2025-11-07 16:35:51] [ERRO] - Verificação falhou: 'files\funcionarios.dat' está DESORDENADO.
+[2025-11-07 16:47:39] [ERRO] - Verificação falhou: 'files\funcionarios.dat' está DESORDENADO.
+[2025-11-07 16:49:41] [ERRO] - Verificação falhou: 'files\funcionarios.dat' está DESORDENADO.
+[2025-11-07 16:49:41] [ALERTA] - Inicialização: Detectado arquivo desordenado 'files\funcionarios.dat'. Iniciando mergesort.
+[2025-11-07 16:49:41] [INFO] - Mergesort de 'files\funcionarios.dat' concluído. Duração: 0.46s
+[2025-11-07 16:49:41] [INFO] - Inicialização: Arquivo 'files\funcionarios.dat' reordenado com sucesso.
+[2025-11-07 16:49:41] [ERRO] - Verificação falhou: 'files\pacientes.dat' está DESORDENADO.
+[2025-11-07 16:49:41] [ALERTA] - Inicialização: Detectado arquivo desordenado 'files\pacientes.dat'. Iniciando mergesort.
+[2025-11-07 16:49:41] [CRÍTICO] - Falha no Mergesort: 'Paciente' object has no attribute 'cod'
+[2025-11-07 16:49:41] [INFO] - Mergesort de 'files\pacientes.dat' concluído. Duração: 0.01s
+[2025-11-07 16:49:41] [INFO] - Inicialização: Arquivo 'files\pacientes.dat' reordenado com sucesso.
+[2025-11-07 16:49:41] [ERRO] - Verificação falhou: 'files\vacinas.dat' está DESORDENADO.
+[2025-11-07 16:49:41] [ALERTA] - Inicialização: Detectado arquivo desordenado 'files\vacinas.dat'. Iniciando mergesort.
+[2025-11-07 16:49:41] [CRÍTICO] - Falha no Mergesort: 'Vacina' object has no attribute 'cod'
+[2025-11-07 16:49:41] [INFO] - Mergesort de 'files\vacinas.dat' concluído. Duração: 0.01s
+[2025-11-07 16:49:41] [INFO] - Inicialização: Arquivo 'files\vacinas.dat' reordenado com sucesso.
+[2025-11-07 16:49:41] [INFO] - Verificação OK: 'files\aplicacoes.dat' está ordenado.
+[2025-11-07 16:50:03] [INFO] - Tentativa de aplicação: PAC=1234, VAC=1234, FUNC=1234
+[2025-11-07 16:50:03] [CRÍTICO] - Erro inesperado em registrar_aplicacao: expected bytes, str found
+[2025-11-07 16:52:56] [INFO] - Tentativa de aplicação: PAC=1234, VAC=1234, FUNC=1234
+[2025-11-07 16:52:56] [CRÍTICO] - Erro inesperado em registrar_aplicacao: expected bytes, str found
+[2025-11-07 16:56:03] [INFO] - Verificação OK: 'files\funcionarios.dat' está ordenado.
+[2025-11-07 16:56:03] [INFO] - Verificação OK: 'files\pacientes.dat' está ordenado.
+[2025-11-07 16:56:03] [INFO] - Verificação OK: 'files\vacinas.dat' está ordenado.
+[2025-11-07 16:56:03] [INFO] - Verificação OK: 'files\aplicacoes.dat' está ordenado.
+[2025-11-07 16:56:16] [INFO] - Tentativa de aplicação: PAC=1234, VAC=1234, FUNC=1234
+[2025-11-07 16:56:16] [INFO] - Sucesso: Aplicação 1 registrada. (Arquivo files\aplicacoes.dat agora desordenado).
+[2025-11-07 16:56:20] [INFO] - Auto-Sort: Mergesort automático iniciado para 'files\aplicacoes.dat'.
+[2025-11-07 16:56:20] [INFO] - Mergesort de 'files\aplicacoes.dat' concluído. Duração: 0.02s
+[2025-11-07 16:58:19] [INFO] - Verificação OK: 'files\funcionarios.dat' está ordenado.
+[2025-11-07 16:58:19] [INFO] - Verificação OK: 'files\pacientes.dat' está ordenado.
+[2025-11-07 16:58:19] [INFO] - Verificação OK: 'files\vacinas.dat' está ordenado.
+[2025-11-07 16:58:19] [INFO] - Verificação OK: 'files\aplicacoes.dat' está ordenado.
+[2025-11-07 16:58:31] [INFO] - Tentativa de aplicação: PAC=1234, VAC=1234, FUNC=1234
+[2025-11-07 16:58:31] [INFO] - Sucesso: Aplicação 2 registrada. (Arquivo files\aplicacoes.dat agora desordenado).
+[2025-11-07 16:58:34] [INFO] - Auto-Sort: Mergesort automático iniciado para 'files\aplicacoes.dat'.
+[2025-11-07 16:58:34] [INFO] - Mergesort de 'files\aplicacoes.dat' concluído. Duração: 0.02s
+[2025-11-07 16:58:34] [INFO] - Auto-Sort: Mergesort de 'files\aplicacoes.dat' concluído.
+[2025-11-07 16:58:34] [INFO] - Índice 'files\idx_paciente_aplic.dat' reconstruído. 2 registros.
+[2025-11-07 16:58:34] [INFO] - Auto-Sort: Índice 'files\idx_paciente_aplic.dat' reconstruído.

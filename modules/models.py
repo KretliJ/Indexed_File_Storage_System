@@ -1,4 +1,5 @@
 import ctypes
+import os
 
 class Funcionario(ctypes.Structure):
     # Estrutura ctypes que mapeia diretamente a structs em C
@@ -55,17 +56,14 @@ class Paciente(ctypes.Structure):
         self.data_nascimento = data_nascimento.encode('utf-8')
         self.endereco = endereco.encode('utf-8')
 
-    # Equivalente de 'imprime()'
     def __str__(self):
-        # Cria representação formatada para funcionario
-        # Decodifica as strings para imprimir
         nome_str = self.nome.decode('utf-8').strip('\\x00')
         cpf_str = self.cpf.decode('utf-8').strip('\\x00')
         data_str = self.data_nascimento.decode('utf-8').strip('\\x00')
         endereco_str = self.endereco.decode('utf-8').strip('\\x00')
         
         return (f"**********************************************\n"
-                f"Paciente de codigo {self.cod}\n"
+                f"Paciente de codigo {self.cod_paciente}\n"
                 f"Nome: {nome_str}\n"
                 f"CPF: {cpf_str}\n"
                 f"Data de Nascimento: {data_str}\n"
@@ -90,17 +88,14 @@ class Vacina(ctypes.Structure):
         self.data_validade = data_validade.encode('utf-8')
         self.descricao = descricao.encode('utf-8')
 
-    # Equivalente de 'imprime()'
     def __str__(self):
-        # Cria representação formatada para funcionario
-        # Decodifica as strings para imprimir
         nome_str = self.nome_fabricante.decode('utf-8').strip('\\x00')
         lote_str = self.lote.decode('utf-8').strip('\\x00')
         data_str = self.data_validade.decode('utf-8').strip('\\x00')
         descricao_str = self.descricao.decode('utf-8').strip('\\x00')
     
         return (f"**********************************************\n"
-                f"Vacina de codigo {self.cod}\n"
+                f"Vacina de codigo {self.cod_vacina}\n"
                 f"Nome: {nome_str}\n"
                 f"Lote: {lote_str}\n"
                 f"Data de validade: {data_str}\n"
@@ -121,5 +116,38 @@ class AplicacaoVacina(ctypes.Structure):
         ("data_aplicacao", ctypes.c_char * 11),
     ]
 
+class IndicePacienteAplicacao(ctypes.Structure):
+    _fields_ = [
+        ("cod_paciente_fk", ctypes.c_int),
+        ("cod_aplicacao_fk", ctypes.c_int), # Ponteiro para o ID da aplicação
+    ]
+    
+    # Ordena pelo cod_paciente, e depois pelo cod_aplicacao
+    def __lt__(self, other):
+        if self.cod_paciente_fk != other.cod_paciente_fk:
+            return self.cod_paciente_fk < other.cod_paciente_fk
+        return self.cod_aplicacao_fk < other.cod_aplicacao_fk
+        
+    def __eq__(self, other):
+        return self.cod_paciente_fk == other.cod_paciente_fk and \
+               self.cod_aplicacao_fk == other.cod_aplicacao_fk
+
+# CONSTANTES TAMANHO DE REGISTRO
+
 RECORD_SIZE_FUNC = ctypes.sizeof(Funcionario)
 RECORD_SIZE_PAC = ctypes.sizeof(Paciente)
+RECORD_SIZE_VAC = ctypes.sizeof(Vacina)
+RECORD_SIZE_APLIC = ctypes.sizeof(AplicacaoVacina)
+RECORD_SIZE_IDX_PAC = ctypes.sizeof(IndicePacienteAplicacao)
+
+# CONSTANTES DE NOMES DE ARQUIVO
+
+FILE_PATH = "files"
+FILE_FUNCIONARIOS = os.path.join(FILE_PATH, "funcionarios.dat")
+FILE_PACIENTES = os.path.join(FILE_PATH, "pacientes.dat")
+FILE_VACINAS = os.path.join(FILE_PATH, "vacinas.dat")
+FILE_APLICACOES = os.path.join(FILE_PATH, "aplicacoes.dat")
+FILE_IDX_PACIENTE_APLIC = os.path.join(FILE_PATH, "idx_paciente_aplic.dat")
+
+LOG_FILE = os.path.join(FILE_PATH, "operation_log.txt")
+CARTAO_PATH = FILE_PATH # Diretório para salvar os cartões

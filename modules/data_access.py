@@ -1,8 +1,11 @@
 import os
 import ctypes
 import time
-from models import Funcionario, Paciente, Vacina, AplicacaoVacina, RECORD_SIZE_FUNC, RECORD_SIZE_PAC, RECORD_SIZE_VAC, RECORD_SIZE_APLIC
-
+from .models import (
+    Funcionario, Paciente, Vacina, AplicacaoVacina, IndicePacienteAplicacao,
+    RECORD_SIZE_FUNC, RECORD_SIZE_PAC, RECORD_SIZE_VAC, 
+    RECORD_SIZE_APLIC, RECORD_SIZE_IDX_PAC
+)
 # FUNÇÕES DE LEITURA
 
 def bin_seek_por_cod(filename: str, record_size: int, structure_class, target_id: int):
