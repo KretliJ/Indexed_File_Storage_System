@@ -41,22 +41,35 @@
     * log em `.txt` para registro de operações.
     * `reportlab` para geração de PDFs.
 
-<!-- Construir alguns protótipos para a aplicação, disponibilizá-los no Github e descrever o que foi considerado. //-->
-### 4. Cronograma de Desenvolvimento
+### 4. Modelagem
+  * **Modelo de classes**
+  <img alt="ModeloClasses 2025-2" src="https://github.com/KretliJ/CSI104_TP/blob/main/Diagrams/ModeloDiagramaClasses.png">
 
-  v1.0 (07/11): Protótipo de estruturas de dado e funções básica de criação de arquivos.
-  v1.2 (07/11): Definição das estruturas (models.py) e funções básicas de IO.
-  v1.4 (14/11): Implementação do Mergesort e geração de dados paralela.
-  v1.6 (20/11): Implementação da Interface Gráfica e conexão interna com serviços.
-  v2.0 (25/11): Implementação da Indexação, Geração de PDF, Tela de Manutenção/Debug e correção de bugs de concorrência.
+  * **Modelo Entidade Relacionamento**
+  <img alt="ModeloER 2025-2" src="https://github.com/KretliJ/CSI104_TP/blob/main/Diagrams/ModeloER.png">
   
-### 5. Referências
+  * **Diagrama de Sequência**
+  <img alt="ModeloSeq 2025-2" src="https://github.com/KretliJ/CSI104_TP/blob/main/Diagrams/DiagramaSequencia.png">
+ 
+  * **Diagrama de Estados**
+  <img alt="ModeloEstados 2025-2" src="https://github.com/KretliJ/CSI104_TP/blob/main/Diagrams/DiagramaEstados.png">
+  
+<!-- Construir alguns protótipos para a aplicação, disponibilizá-los no Github e descrever o que foi considerado. //-->
+### 5. Cronograma de Desenvolvimento
+
+  * v1.0 (07/11): Protótipo de estruturas de dado e funções básica de criação de arquivos.
+  * v1.2 (07/11): Definição das estruturas (models.py) e funções básicas de IO.
+  * v1.4 (14/11): Implementação do Mergesort e geração de dados paralela.
+  * v1.6 (20/11): Implementação da Interface Gráfica e conexão interna com serviços.
+  * v2.0 (25/11): Implementação da Indexação, Geração de PDF, Tela de Manutenção/Debug e correção de bugs de concorrência.
+  
+### 6. Referências
 
   * Material disciplina CSI104 - ALGORITMOS E ESTRUTURAS DE DADOS II.
   * Documentação Python (`ctypes`, `multiprocessing`, `tkinter`).
   * Documentação ReportLab (Geração de PDFs).
 
-### 6. Instalação e Execução
+### 7. Instalação e Execução
 
   * Pré-requisitos
     * Python 3.13 ou superior
