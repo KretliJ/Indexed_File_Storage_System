@@ -62,6 +62,10 @@
   * v1.4 (14/11): Implementação do Mergesort e geração de dados paralela.
   * v1.6 (20/11): Implementação da Interface Gráfica e conexão interna com serviços.
   * v2.0 (25/11): Implementação da Indexação, Geração de PDF, Tela de Manutenção/Debug e correção de bugs de concorrência.
+  * v2.5 (26/11): Implementação de :
+    * Funções de Seleção por substituição
+    * Árvore Binária de vencedores
+    * Logging dos resultados das questões propostas no Trabalho Prático – Parte II
   
 ### 6. Referências
 
@@ -88,4 +92,6 @@
     ```
     python main.py
     ```
-Nota: Na primeira execução, o sistema irá criar automaticamente o diretório files/ e gerar os arquivos binários iniciais com dados de teste. Esse processo pode levar alguns segundos. Logs de INFO serão registrados e prints de debug serão mostrados no terminal.
+Notas: 
+  * Na primeira execução, o sistema irá criar automaticamente o diretório files/ e gerar os arquivos binários iniciais com dados de teste. Esse processo pode levar alguns segundos. Logs de INFO serão registrados e prints de debug serão mostrados no terminal.
+  * Os arquivos de log geral e da parte II podem ser acessados na pasta "Logs"
