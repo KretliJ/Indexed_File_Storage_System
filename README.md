@@ -4,15 +4,15 @@
 
 <!-- Descrever um resumo sobre o trabalho. -->
 
-### Resumo
+### 📋 Resumo
  
   Este trabalho final consiste no desenvolvimento de um Sistema de Gestão de Vacinação, focado na manipulação de arquivos binários. O sistema simula um ambiente de banco de dados customizado, capaz de gerenciar grandes volumes de dados (funcionários, pacientes, vacinas e aplicações) utilizando estruturas de tamanho fixo, indexação e algoritmos de ordenação externa (em disco).
 
-### 1. Tema
+### 1.🎯 Tema
 
   Desenvolvimento de um sistema de informação para controle de vacinação com persistência em arquivos binários e interface gráfica.
 
-### 2. Escopo
+### 2.🚀 Escopo
   
   O sistema entregue contempla as seguintes funcionalidades e características:
   
@@ -29,19 +29,20 @@
   * **Performance:** Geração de massa de dados utilizando multiprocessamento para criação rápida de registros na quantidade de milhares ou mais.
   
 <!-- Apresentar restrições de funcionalidades e de escopo. -->
-### 3. Restrições
+### 3.🛠️ Restrições
 
-  * **Linguagem:** Python 3.14.
+  * **Linguagem:** Python 3.13+
   * **Persistência:** Módulo `ctypes` (registros de tamanho fixo).
   * **Dados:** Criados exclusivamente de maneira aleatória dada a quantidade de registros dos arquivos operados.
     * Atualmente 10000 registros para vacinas, clientes e funcionários, podendo ser expandida.  
   * **Interface:** `tkinter` (Pacote nativo Python).
   * **Concorrência:** threading (para IO/Sort em background) e multiprocessing (para geração de dados).
   * **Relatórios:**
-    * log em `.txt` para registro de operações.
-    * `reportlab` para geração de PDFs.
+    * `operation_log.txt`: Registro de operações gerais.
+    * `relatorio_parte2.txt`: Análise comparativa dos algoritmos de ordenação.
+    * `reportlab`: Geração de PDFs.
 
-### 4. Modelagem
+### 4.📐 Modelagem
   * **Modelo de classes**
   <img alt="ModeloClasses 2025-2" src="https://github.com/KretliJ/CSI104_TP/blob/main/Diagrams/ModeloDiagramaClasses.png">
 
@@ -55,27 +56,28 @@
   <img alt="ModeloEstados 2025-2" src="https://github.com/KretliJ/CSI104_TP/blob/main/Diagrams/DiagramaEstados.png">
   
 <!-- Construir alguns protótipos para a aplicação, disponibilizá-los no Github e descrever o que foi considerado. //-->
-### 5. Cronograma de Desenvolvimento
+### 5.📅 Cronograma de Desenvolvimento
 
-  * v1.0 (07/11): Protótipo de estruturas de dado e funções básica de criação de arquivos.
-  * v1.2 (07/11): Definição das estruturas (models.py) e funções básicas de IO.
-  * v1.4 (14/11): Implementação do Mergesort e geração de dados paralela.
-  * v1.6 (20/11): Implementação da Interface Gráfica e conexão interna com serviços.
+  * v1.0 (07/11): Protótipo de estruturas de dados e funções básica de criação de arquivos.
+  * v1.2 (07/11): Definição das estruturas (`models.py`) e funções básicas de IO.
+  * v1.4 (14/11): Implementação do Mergesort (V1) e geração de dados paralela.
+  * v1.6 (20/11): Implementação da Interface Gráfica e conexão interna com serviços (Modelo MVC).
   * v2.0 (25/11): Implementação da Indexação, Geração de PDF, Tela de Manutenção/Debug e correção de bugs de concorrência.
-  * v2.5 (26/11): Implementação de :
+  * v2.5 (26/11): Implementação de:
     * Funções de Seleção por substituição
     * Árvore Binária de vencedores
     * Logging dos resultados das questões propostas no Trabalho Prático – Parte II
     * Mudanças na lógica do sorting da função `_quicksort_in_ram_generic()`:
       * Sorting nativo Python -> Implementação manual 
   
-### 6. Referências
+### 6.📚 Referências
 
   * Material disciplina CSI104 - ALGORITMOS E ESTRUTURAS DE DADOS II.
   * Documentação Python (`ctypes`, `multiprocessing`, `tkinter`).
   * Documentação ReportLab (Geração de PDFs).
+  * Knuth, D. E. The Art of Computer Programming, Vol. 3: Sorting and Searching.
 
-### 7. Instalação e Execução
+### 7.⚙️ Instalação e Execução
 
   * Pré-requisitos
     * Python 3.13 ou superior
@@ -97,3 +99,8 @@
 Notas: 
   * Na primeira execução, o sistema irá criar automaticamente o diretório files/ e gerar os arquivos binários iniciais com dados de teste. Esse processo pode levar alguns segundos. Logs de INFO serão registrados e prints de debug serão mostrados no terminal.
   * Os arquivos de log geral e da parte II podem ser acessados na pasta "Logs"
+  * Os testes comparativos podem ser realizados pela interface de usuário em: `Manutenção e Debug` -> `Gerar relatório comparativo`
+    * Ou executados diretamente pelo terminal com:
+    ```
+    python teste_part2.py
+    ```
