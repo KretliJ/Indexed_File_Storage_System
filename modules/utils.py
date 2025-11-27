@@ -1,6 +1,7 @@
 import ctypes
 import os
 import random
+import sys
 import time
 import heapq
 import math
@@ -13,16 +14,26 @@ from . import models
 
 # FUNÇÃO DE LOG 
 
-def _log_operacao(mensagem: str, nivel: str = "INFO"):
-    #y Registra uma operação no arquivo de log central (operation_log.txt)
-    try:
-        # 'a' = append (adiciona ao final do arquivo)
-        with open(LOG_FILE, "a", encoding="utf-8") as f:
-            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
-            f.write(f"[{timestamp}] [{nivel.upper()}] - {mensagem}\n")
-    except Exception as e:
-        print(f"ERRO CRÍTICO: Falha ao escrever no log '{LOG_FILE}'. Erro: {e}")
+def _log_operacao(mensagem: str, nivel: str = "INFO", arquivo_destino=LOG_FILE):
 
+    # Se arquivo_destino não for informado, usa o log padrão do sistema.
+    
+    try:
+        # Garante que o diretório existe se for um arquivo novo
+        pasta = os.path.dirname(arquivo_destino)
+        if pasta and not os.path.exists(pasta):
+            os.makedirs(pasta, exist_ok=True)
+
+        with open(arquivo_destino, "a", encoding="utf-8") as f:
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+            # Formatação para relatórios se o nível for 'RELATORIO'
+            if nivel == "RELATORIO":
+                f.write(f"{mensagem}\n")
+            else:
+                f.write(f"[{timestamp}] [{nivel.upper()}] - {mensagem}\n")
+                
+    except Exception as e:
+        print(f"Falha ao escrever no log '{arquivo_destino}'. Erro: {e}")
 # GERAÇÃO DE DADOS 
 
 DADOS_AMOSTRA_NOME = [
@@ -166,17 +177,52 @@ def gera_arquivo_VACINAS_paralelo(filename, num_registros, record_size_bytes, ch
 
 
 # ORDENAÇÃO EXTERNA
+# QUICKSORT MANUAL
+# Correção de erro do limite de recursão do python
+
+def _qs_compare(obj_a, obj_b):
+    
+    # Função auxiliar para fallback de comparação manual de campos se der erro.
+    
+    try:
+        return obj_a < obj_b
+    except TypeError:
+        # Fallback se __lt__ não estiver definido na classe
+        key_a = getattr(obj_a, obj_a._fields_[0][0])
+        key_b = getattr(obj_b, obj_b._fields_[0][0])
+        return key_a < key_b
+
+def _qs_partition(arr, low, high):
+    # Escolha de pivô aleatório
+    rand_pivot_idx = random.randint(low, high)
+    arr[low], arr[rand_pivot_idx] = arr[rand_pivot_idx], arr[low]
+    pivot = arr[low]
+    
+    i = low + 1
+    for j in range(low + 1, high + 1):
+        # Se arr[j] < pivot
+        if _qs_compare(arr[j], pivot):
+            arr[i], arr[j] = arr[j], arr[i]
+            i += 1
+    
+    # Coloca o pivô na posição correta
+    arr[low], arr[i - 1] = arr[i - 1], arr[low]
+    return i - 1
+
+def _qs_recursive(arr, low, high):
+    if low < high:
+        pi = _qs_partition(arr, low, high)
+        _qs_recursive(arr, low, pi - 1)
+        _qs_recursive(arr, pi + 1, high)
 
 def _quicksort_in_ram_generic(arr):
     # Função auxiliar para ordenar chunks em RAM.
-    try:
-        arr.sort() # Tenta usar o __lt__ da classe
-        return arr
-    except TypeError:
-        # Fallback se __lt__ não estiver definido
-        arr.sort(key=lambda x: getattr(x, x._fields_[0][0]))
-        return arr
-
+    # Aumentar limite de recursão para segurança em listas muito grandes
+    
+    sys.setrecursionlimit(max(2000, len(arr) + 100))
+    
+    _qs_recursive(arr, 0, len(arr) - 1)
+    return arr
 
 def mergesort_file(main_filename, structure_class, record_size_bytes, chunk_records_count):
     start_time = time.perf_counter()

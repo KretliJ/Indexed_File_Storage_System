@@ -12,6 +12,7 @@ except ImportError as e:
     print(f"Verificar se os módulos existem ou se o caminho está correto.")
     print(f"Erro: {e}")
     exit()
+import teste_parte2
 
 # Tamanho do chunk para usar durante o mergesort
 CHUNK_RECORDS_PARA_MERGE = 10_000
@@ -161,7 +162,7 @@ class App(tk.Tk):
     # Funções de Controle da GUI
 
     def _iniciar_reordenacao_automatica(self):
-        """Inicia a operação de ordenação em uma thread separada."""
+        # Inicia a operação de ordenação em uma thread separada
         print("GUI: Iniciando reordenação automática assíncrona...")
         
         # Bloqueia a GUI
@@ -290,7 +291,10 @@ class FrameHome(ttk.Frame):
         self.btn_manut = ttk.Button(frame_botoes, text="🛠️ Manutenção e Debug",
                                 command=lambda: controller.mostrar_frame("FrameManutencao"))
         self.btn_manut.pack(fill="x", pady=5)
-
+    
+        self.btn_sair = ttk.Button(frame_botoes, text="Fechar",
+                                command=lambda: self.controller.destroy())
+        self.btn_sair.pack(fill="x", pady=5)
 
     def _gerar_random(self, controller):
         resposta = messagebox.askyesno("Confirmar", "Isso irá gerar 5.000 registros aleatórios e desordenar o arquivo.\nDeseja continuar?")
@@ -354,10 +358,19 @@ class FrameManutencao(ttk.Frame):
                                    command=self._forcar_sort)
         self.btn_sort.pack(fill="x")
 
+        # Botão relatório comparativo
+        group_report = ttk.LabelFrame(self, text=" Ferramentas de Relatório ", padding=15)
+        group_report.pack(padx=20, pady=10, fill="x")
+        
+        self.btn_report = ttk.Button(group_report, text="Gerar relatório comparativo",
+                                command=lambda: teste_parte2.rodar_teste())
+        self.btn_report.pack(fill="x")
+
         # Botão Voltar
         self.btn_voltar = ttk.Button(self, text="Voltar ao Menu",
                                 command=lambda: controller.mostrar_frame("FrameHome"))
         self.btn_voltar.pack(pady=20)
+
 
     def _gerar_dados(self):
         qtd_str = self.entry_qtd.get()

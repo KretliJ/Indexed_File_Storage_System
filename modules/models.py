@@ -158,11 +158,13 @@ RECORD_SIZE_IDX_PAC = ctypes.sizeof(IndicePacienteAplicacao)
 # CONSTANTES DE NOMES DE ARQUIVO
 
 FILE_PATH = "files"
+LOGS_PATH = "Logs"
 FILE_FUNCIONARIOS = os.path.join(FILE_PATH, "funcionarios.dat")
 FILE_PACIENTES = os.path.join(FILE_PATH, "pacientes.dat")
 FILE_VACINAS = os.path.join(FILE_PATH, "vacinas.dat")
 FILE_APLICACOES = os.path.join(FILE_PATH, "aplicacoes.dat")
 FILE_IDX_PACIENTE_APLIC = os.path.join(FILE_PATH, "idx_paciente_aplic.dat")
 
-LOG_FILE = os.path.join(FILE_PATH, "operation_log.txt")
+LOG_FILE = os.path.join(LOGS_PATH, "operation_log.txt")
+LOG_FILE_II = os.path.join(LOGS_PATH, "log_parteII.txt")
 CARTAO_PATH = FILE_PATH
