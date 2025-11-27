@@ -66,7 +66,7 @@
     * Funções de Seleção por substituição
     * Árvore Binária de vencedores
     * Logging dos resultados das questões propostas no Trabalho Prático – Parte II
-    * Mudanças na lógica do sorting da função `_quicksort_in_ram_generic`:
+    * Mudanças na lógica do sorting da função `_quicksort_in_ram_generic()`:
       * Sorting nativo Python -> Implementação manual 
   
 ### 6. Referências
