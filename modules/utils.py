@@ -1,589 +1,324 @@
 import ctypes
-import os
 import random
-import sys
-import time
-import heapq
-import math
-import multiprocessing
-from .models import (
-    Funcionario, Paciente, Vacina, AplicacaoVacina, IndicePacienteAplicacao,
-    LOG_FILE
-)
+import os
 from . import models
+from . import utils_parte3
 
-# FUNÇÃO DE LOG 
+# --- DADOS MOCK ---
+NOMES = ["Ana", "Carlos", "Bruno", "Daniela", "Eduardo", "Fernanda", "Gabriel", "Helena"]
+VACINAS = ["Pfizer", "Coronavac", "AstraZeneca", "Janssen"]
 
-def _log_operacao(mensagem: str, nivel: str = "INFO", arquivo_destino=LOG_FILE):
+# --- FUNÇÃO GENÉRICA DE EXPORTAÇÃO (PRINT) ---
 
-    # Se arquivo_destino não for informado, usa o log padrão do sistema.
+def exportar_base_para_log(arquivo_bin, struct_class, titulo):
+    """Lê um arquivo binário sequencialmente e escreve o __str__ no log txt."""
+    
+    tamanho_registro = ctypes.sizeof(struct_class)
+    
+    print(f"Exportando {titulo} para {models.LOG_DUMP}...")
     
     try:
-        # Garante que o diretório existe se for um arquivo novo
-        pasta = os.path.dirname(arquivo_destino)
-        if pasta and not os.path.exists(pasta):
-            os.makedirs(pasta, exist_ok=True)
-
-        with open(arquivo_destino, "a", encoding="utf-8") as f:
-            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
-            # Formatação para relatórios se o nível for 'RELATORIO'
-            if nivel == "RELATORIO":
-                f.write(f"{mensagem}\n")
-            else:
-                f.write(f"[{timestamp}] [{nivel.upper()}] - {mensagem}\n")
-                
-    except Exception as e:
-        print(f"Falha ao escrever no log '{arquivo_destino}'. Erro: {e}")
-# GERAÇÃO DE DADOS 
-
-DADOS_AMOSTRA_NOME = [
-    "Ana", "Carlos", "Débora", "Gustavo", "Silvia", "Bruno", "Carla", "Diego", 
-    "Gabriela", "Sofia", "Genésio", "Lucas", "Anderson", "Clara", "Hellen", 
-    "Maria", "Lara", "Milena", "Ricardo", "Vanessa", "Joaquim", "Beatriz",
-    "Felipe", "Elisa", "Raul", "Tatiana", "Marcos", "Livia", "Sergio", "Paula",
-    "Otavio", "Julia", "Roberto", "Isabela", "Caio", "Fernanda", "Tiago"
-]
-DADOS_AMOSTRA_VACINA = [
-    "Pfizer", "Coronavac", "AstraZeneca", "Janssen", "Sputnik V", 
-    "Moderna", "Gripe (Influenza)", "Febre Amarela", "BCG", "Hepatite B"
-]
-DADOS_AMOSTRA_ENDERECO = [] # Não utilizado por enquanto
-dados_amostra_worker = []
-
-def _inicializa_worker_gerador(amostra):
-    global dados_amostra_worker
-    dados_amostra_worker = amostra
-    random.seed(os.getpid())
-
-def _gera_chunk_de_FUNCIONARIOS(args):
-    start_id, tamanho_chunk, record_size_bytes = args
-    print(f"[Worker {os.getpid()}] Gerando chunk de {tamanho_chunk} FUNCIONARIOS (ID: {start_id})...")
-    buffer = bytearray()
-    
-    for i in range(start_id, start_id + tamanho_chunk):
-        cod = i
-        nome = dados_amostra_worker[i % len(dados_amostra_worker)]
-        cpf = f"{i%1000:03}.{random.randint(100, 999)}.{random.randint(100, 999)}-{i%100:02}"
-        ano = random.randint(1970, 2002)
-        mes = random.randint(1, 12)
-        dia = random.randint(1, 28)
-        data_nascimento = f"{dia:02d}/{mes:02d}/{ano}"
-        salario = round(random.uniform(1500.0, 12000.0), 2)
-        
-        novo_funcionario = Funcionario(cod, nome, cpf, data_nascimento, salario)
-        
-        buffer.extend(novo_funcionario)
-        
-    return buffer
-
-def _gera_chunk_de_PACIENTES(args):
-    start_id, tamanho_chunk, record_size_bytes = args
-    print(f"[Worker {os.getpid()}] Gerando chunk de {tamanho_chunk} PACIENTES (ID: {start_id})...")
-    
-    buffer = bytearray()
-    
-    for i in range(start_id, start_id + tamanho_chunk):
-        cod = i
-        nome = dados_amostra_worker[i % len(dados_amostra_worker)]
-        cpf = f"{i%1000:03}.{random.randint(100, 999)}.{random.randint(100, 999)}-{i%100:02}"
-        ano = random.randint(1950, 2023)
-        mes = random.randint(1, 12)
-        dia = random.randint(1, 28)
-        data_nascimento = f"{dia:02d}/{mes:02d}/{ano}"
-        
-        # Simulação de endereço
-        rua = f"Rua {i % 100}"
-        num = 1 + (i % 50)
-        bairro = f"Bairro {i % 10}"
-        endereco_completo = f"{rua}, {num} - {bairro}"
-        novo_paciente = Paciente(cod, nome, cpf, data_nascimento, endereco_completo)
-        
-        buffer.extend(novo_paciente)
-        
-    return buffer
-
-def _gera_chunk_de_VACINAS(args):
-    start_id, tamanho_chunk, record_size_bytes = args
-    print(f"[Worker {os.getpid()}] Gerando chunk de {tamanho_chunk} VACINAS (ID: {start_id})...")
-    
-    buffer = bytearray()
-    
-    for i in range(start_id, start_id + tamanho_chunk):
-        cod = i
-        fabricante = dados_amostra_worker[i % len(dados_amostra_worker)]
-        lote = f"LOTE-{i%1000:03d}-{random.randint(1000, 9999)}"
-        ano = random.randint(2024, 2026)
-        mes = random.randint(1, 12)
-        dia = random.randint(1, 28)
-        data_validade = f"{dia:02d}/{mes:02d}/{ano}"
-        descricao_simulada = f"Descrição da vacina {fabricante}"
-        nova_vacina = Vacina(cod, fabricante, lote, data_validade, descricao_simulada)
-        
-        buffer.extend(nova_vacina)
-        
-    return buffer
-
-def _gerador_paralelo_orchestrator(filename, num_registros, record_size_bytes, worker_function, amostra_dados, chunk_por_cpu=5):
-    # Função orquestradora para geração paralela de dados.
-  
-    print(f"Iniciando geração de arquivo '{filename}' com {num_registros:,} registros...")
-    start_time = time.perf_counter()
-
-    try:
-        num_processos = multiprocessing.cpu_count()
-        total_chunks = num_processos * chunk_por_cpu
-        tamanho_chunk = math.ceil(num_registros / total_chunks)
-        
-        lista_tarefas = []
-        for i in range(total_chunks):
-            start_id = 1 + (i * tamanho_chunk)
-            tamanho_real = min(tamanho_chunk, num_registros - start_id + 1)
-            if tamanho_real <= 0:
-                break
-            lista_tarefas.append((start_id, tamanho_real, record_size_bytes))
-
-        print(f"Usando {num_processos} processos para {len(lista_tarefas)} tarefas.")
-        
-        with open(filename, "wb") as f:
-            with multiprocessing.Pool(processes=num_processos, 
-                                      initializer=_inicializa_worker_gerador, 
-                                      initargs=(amostra_dados,)) as pool:
-                
-                total_escrito = 0
-                for i, chunk_de_bytes in enumerate(pool.imap(worker_function, lista_tarefas)):
-                    f.write(chunk_de_bytes)
-                    
-                    registros_no_chunk = len(chunk_de_bytes) // record_size_bytes
-                    total_escrito += registros_no_chunk
-                    print(f"Progresso: {i+1}/{len(lista_tarefas)} chunks escritos... ({total_escrito:,}/{num_registros:,} registros)")
-
-        end_time = time.perf_counter()
-        print("\n--- Concluído ---")
-        print(f"Arquivo '{filename}' gerado com sucesso.")
-        print(f"Tempo total: {end_time - start_time:4.2f} segundos.")
-    
-    except Exception as e:
-        print(f"Ocorreu um erro ao gerar o arquivo '{filename}': {e}")
-
-# Funções públicas de geração chamadas pelo main.py
-def gera_arquivo_FUNCIONARIOS_paralelo(filename, num_registros, record_size_bytes, chunk_por_cpu=5):
-    _gerador_paralelo_orchestrator(filename, num_registros, record_size_bytes, _gera_chunk_de_FUNCIONARIOS, DADOS_AMOSTRA_NOME, chunk_por_cpu)
-
-def gera_arquivo_PACIENTES_paralelo(filename, num_registros, record_size_bytes, chunk_por_cpu=5):
-    _gerador_paralelo_orchestrator(filename, num_registros, record_size_bytes, _gera_chunk_de_PACIENTES, DADOS_AMOSTRA_NOME, chunk_por_cpu)
-
-def gera_arquivo_VACINAS_paralelo(filename, num_registros, record_size_bytes, chunk_por_cpu=5):
-    _gerador_paralelo_orchestrator(filename, num_registros, record_size_bytes, _gera_chunk_de_VACINAS, DADOS_AMOSTRA_VACINA, chunk_por_cpu)
-
-
-# ORDENAÇÃO EXTERNA
-# QUICKSORT MANUAL
-# Correção de erro do limite de recursão do python
-
-def _qs_compare(obj_a, obj_b):
-    
-    # Função auxiliar para fallback de comparação manual de campos se der erro.
-    
-    try:
-        return obj_a < obj_b
-    except TypeError:
-        # Fallback se __lt__ não estiver definido na classe
-        key_a = getattr(obj_a, obj_a._fields_[0][0])
-        key_b = getattr(obj_b, obj_b._fields_[0][0])
-        return key_a < key_b
-
-def _qs_partition(arr, low, high):
-    # Escolha de pivô aleatório
-    rand_pivot_idx = random.randint(low, high)
-    arr[low], arr[rand_pivot_idx] = arr[rand_pivot_idx], arr[low]
-    pivot = arr[low]
-    
-    i = low + 1
-    for j in range(low + 1, high + 1):
-        # Se arr[j] < pivot
-        if _qs_compare(arr[j], pivot):
-            arr[i], arr[j] = arr[j], arr[i]
-            i += 1
-    
-    # Coloca o pivô na posição correta
-    arr[low], arr[i - 1] = arr[i - 1], arr[low]
-    return i - 1
-
-def _qs_recursive(arr, low, high):
-    if low < high:
-        pi = _qs_partition(arr, low, high)
-        _qs_recursive(arr, low, pi - 1)
-        _qs_recursive(arr, pi + 1, high)
-
-def _quicksort_in_ram_generic(arr):
-    # Função auxiliar para ordenar chunks em RAM.
-    # Aumentar limite de recursão para segurança em listas muito grandes
-    
-    sys.setrecursionlimit(max(2000, len(arr) + 100))
-    
-    _qs_recursive(arr, 0, len(arr) - 1)
-    return arr
-
-def mergesort_file(main_filename, structure_class, record_size_bytes, chunk_records_count):
-    start_time = time.perf_counter()
-    print(f"\nFASE 1: Iniciando Mergesort de '{main_filename}'...")
-    print(f"Registros por chunk (RAM): {chunk_records_count:,}")
-    
-    chunk_files = [] # Lista para guardar nomes dos arquivos temporários
-
-    try:
-        chunk_num = 0
-        total_records = 0
-        
-        with open(main_filename, "rb") as f_main:
-            while True:
-                records_in_memory = []
-                for _ in range(chunk_records_count):
-                    buffer = f_main.read(record_size_bytes)
-                    if not buffer:
-                        break
-                    records_in_memory.append(structure_class.from_buffer_copy(buffer))
-                
-                if not records_in_memory:
-                    break # Fim do arquivo principal
-
-                # Ordena o chunk em RAM
-                records_in_memory = _quicksort_in_ram_generic(records_in_memory)
-                
-                # Salva o chunk ordenado
-                chunk_name = f"__chunk_sorted_{chunk_num}.dat"
-                chunk_files.append(chunk_name)
-                
-                with open(chunk_name, "wb") as f_chunk:
-                    for record in records_in_memory:
-                        f_chunk.write(record)
-                
-                print(f"  -> Chunk {chunk_num} ({len(records_in_memory)} regs) ordenado e salvo.")
-                total_records += len(records_in_memory)
-                chunk_num += 1
-        
-        print(f"  -> Fase 1 concluída: {total_records:,} registros divididos em {len(chunk_files)} chunks.")
-
-        if not chunk_files:
-            print("Arquivo principal está vazio. Abortando.")
-            return
-
-        # K-Way Merge
-        print("\nFASE 2: Mesclando chunks ordenados...")
-        
-        # Min-Heap para guardar (registro, indice_do_chunk)
-        min_heap = []
-        open_chunk_files = [] 
-        
-        try:
-            # Abre todos os chunks e lê o primeiro registro de cada
-            for i, chunk_name in enumerate(chunk_files):
-                f = open(chunk_name, "rb")
-                open_chunk_files.append(f)
-                
-                buffer = f.read(record_size_bytes)
-                if buffer:
-                    record = structure_class.from_buffer_copy(buffer)
-                    # Adiciona (registro, indice) no heap
-                    heapq.heappush(min_heap, (record, i))
-
-            # Abre o arquivo de saída (substitui o original)
-            with open(main_filename, "wb") as f_out:
-                registros_escritos = 0
-                while min_heap:
-                    # Pega o menor registro de todos
-                    smallest_record, chunk_index = heapq.heappop(min_heap)
-                    
-                    # Escreve no arquivo final
-                    f_out.write(smallest_record)
-                    registros_escritos += 1
-
-                    # Lê o próximo registro do chunk de onde o menor saiu
-                    f_chunk = open_chunk_files[chunk_index]
-                    next_buffer = f_chunk.read(record_size_bytes)
-                    
-                    if next_buffer:
-                        # Se houver próximo, adiciona no heap
-                        next_record = structure_class.from_buffer_copy(next_buffer)
-                        heapq.heappush(min_heap, (next_record, chunk_index))
-                    # Se não houver, o arquivo desse chunk acabou
-                
-                print(f"  -> Merge concluído. {registros_escritos:,} registros escritos.")
-
-        finally:
-            # Garante que todos os file handles dos chunks sejam fechados
-            for f in open_chunk_files:
-                f.close()
-
-    except FileNotFoundError:
-        print(f"Erro: Arquivo principal '{main_filename}' não encontrado.")
-        _log_operacao(f"Falha no Mergesort: Arquivo '{main_filename}' não encontrado.", "ERRO")
-        return
-    except Exception as e:
-        print(f"Ocorreu um erro inesperado no Mergesort: {e}")
-        _log_operacao(f"Falha no Mergesort: {e}", "CRÍTICO")
-    finally:
-        # Limpar os arquivos temporários
-        print("\nFASE 3: Limpando arquivos temporários...")
-        cleaned_count = 0
-        for chunk_name in chunk_files:
-            if os.path.exists(chunk_name):
-                os.remove(chunk_name)
-                cleaned_count += 1
-        print(f"  -> {cleaned_count} arquivos chunk removidos.")
-
-    end_time = time.perf_counter()
-    print(f"\nMergesort de '{main_filename}' concluído!")
-    print(f"Tempo total: {end_time - start_time:.2f} segundos.")
-    _log_operacao(f"Mergesort de '{main_filename}' concluído. Duração: {end_time - start_time:.2f}s", "INFO")
-
-# EMBARALHAMENTO EXTERNO
-
-def fat_scramble_generic(main_filename, record_size_bytes, chunk_records_count):
-    print(f"Iniciando embaralhamento externo de '{main_filename}'...")
-    start_time = time.perf_counter()
-    chunk_files = [] # Nomes dos arquivos temporários
-    
-    try:
-        # Quebrar, embaralhar chunks em RAM e salvar
-        print(f"\nPASSO 1: Lendo e embaralhando chunks de {chunk_records_count} registros...")
-        chunk_num = 0
-        total_records = 0
-        
-        with open(main_filename, "rb") as f_main:
-            while True:
-                records_in_memory = []
-                for _ in range(chunk_records_count):
-                    buffer = f_main.read(record_size_bytes)
-                    if not buffer:
-                        break
-                    records_in_memory.append(buffer) # Lê bytes brutos
-                
-                if not records_in_memory:
-                    break
-
-                # Embaralha o chunk em RAM
-                random.shuffle(records_in_memory)
-                
-                # Salva o chunk embaralhado
-                chunk_name = f"__chunk_scrambled_{chunk_num}.dat"
-                chunk_files.append(chunk_name)
-                
-                with open(chunk_name, "wb") as f_chunk:
-                    for record_buffer in records_in_memory:
-                        f_chunk.write(record_buffer)
-
-                print(f"  -> Chunk {chunk_num} ({len(records_in_memory)} regs) embaralhado e salvo.")
-                total_records += len(records_in_memory)
-                chunk_num += 1
-
-        if not chunk_files:
-            print("Arquivo principal está vazio. Abortando.")
-            return
-
-        # Remontar o arquivo, com chunks em ordem aleatória
-        print("\nPASSO 2: Remontando arquivo principal com chunks em ordem aleatória...")
-        
-        # Embaralha a ordem dos chunks
-        random.shuffle(chunk_files)
-        
-        registros_escritos = 0
-        with open(main_filename, "wb") as f_out: # Sobrescreve o original
-            for i, chunk_name in enumerate(chunk_files):
-                print(f"  -> Escrevendo chunk {i+1}/{len(chunk_files)} (Arquivo: {chunk_name})...")
-                with open(chunk_name, "rb") as f_chunk:
-                    while True:
-                        buffer = f_chunk.read(4096) # Lê em pedaços de 4KB
-                        if not buffer:
-                            break
-                        f_out.write(buffer)
-                        registros_escritos += len(buffer)
-        
-        print(f"  -> Remontagem concluída. {registros_escritos // record_size_bytes} registros escritos.")
-
-    except FileNotFoundError:
-        print(f"Erro: Arquivo principal '{main_filename}' não encontrado.")
-    except Exception as e:
-        print(f"Ocorreu um erro inesperado no fat_scramble: {e}")
-    finally:
-        # Limpar
-        print("\nPASSO 3: Limpando arquivos temporários...")
-        cleaned_count = 0
-        for chunk_name in chunk_files:
-            if os.path.exists(chunk_name):
-                os.remove(chunk_name)
-                cleaned_count += 1
-        print(f"  -> {cleaned_count} arquivos chunk removidos.")
-
-    end_time = time.perf_counter()
-    print(f"\nEmbaralhamento de '{main_filename}' concluído!")
-    print(f"Tempo total: {end_time - start_time:.2f} segundos.")
-
-
-# FUNÇÕES DE ÍNDICE
-
-def reconstruir_indice_paciente():
-    # Varre 'aplicacoes.dat' e cria um novo arquivo de índice 'idx_paciente_aplic.dat'.    
-
-    try:
-        from . import models
-    except ImportError:
-        print("Erro fatal: 'models.py' não encontrado. Não é possível reconstruir o índice.")
-        return
-
-    print("Iniciando reconstrução do índice 'idx_paciente_aplicacao.dat'...")
-    start_time = time.perf_counter()
-    
-    indice_em_memoria = []
-    total_apps = 0
-    
-    try:
-        # Ler todas as aplicações (leitura sequencial)
-        with open(models.FILE_APLICACOES, "rb") as f:
-            while True:
-                buffer = f.read(models.RECORD_SIZE_APLIC)
-                if not buffer:
-                    break
-                app = AplicacaoVacina.from_buffer_copy(buffer)
-                
-                # Cria o registro de índice
-                novo_indice = IndicePacienteAplicacao(
-                    cod_paciente_fk=app.cod_paciente_fk,
-                    cod_aplicacao_fk=app.cod_aplicacao
-                )
-                indice_em_memoria.append(novo_indice)
-                total_apps += 1
-        
-        if total_apps == 0:
-            print("Nenhuma aplicação para indexar.")
-            return
-
-        print(f"  -> {total_apps} registros lidos. Ordenando índice em RAM...")
-
-        # Ordenar o índice em memória (pelo cod_paciente_fk)
-        indice_em_memoria.sort(key=lambda x: x.cod_paciente_fk)
-        
-        # Escrever o índice ordenado no arquivo
-        with open(models.FILE_IDX_PACIENTE_APLIC, "wb") as f_idx:
-            for item in indice_em_memoria:
-                f_idx.write(item)
-        
-        duration = time.perf_counter() - start_time
-        print(f"  -> Índice reconstruído e salvo com sucesso! ({duration:.2f}s)")
-        
-        # Logar a operação
-        _log_operacao(f"Índice '{models.FILE_IDX_PACIENTE_APLIC}' reconstruído. {total_apps} registros.", "INFO")
-
-    except FileNotFoundError:
-        print(f"Erro: Arquivo '{models.FILE_APLICACOES}' não encontrado. Não foi possível construir o índice.")
-        _log_operacao(f"Falha ao reconstruir índice: '{models.FILE_APLICACOES}' não encontrado.", "ERRO")
-    except Exception as e:
-        print(f"Erro ao reconstruir índice: {e}")
-        _log_operacao(f"Falha ao reconstruir índice: {e}", "CRÍTICO")
-
-# FUNÇÕES DE VERIFICAÇÃO
-
-def verifica_ordenacao(filename, structure_class, record_size_bytes):
-    # Verifica se um arquivo está ordenado pelo cod.
-    
-    print(f"Verificando ordenação de '{filename}'...")
-    try:
-        with open(filename, "rb") as f:
-            key_field_name = structure_class._fields_[0][0]
+        with open(arquivo_bin, "rb") as f_in, open(models.LOG_DUMP, "a", encoding="utf-8") as f_log:
+            f_log.write(f"\n{'='*40}\nRELATÓRIO: {titulo}\n{'='*40}\n")
             
-            last_key = -float('inf')
-            count = 0
-            
+            contador = 0
             while True:
-                buffer = f.read(record_size_bytes)
+                buffer = f_in.read(tamanho_registro)
                 if not buffer:
                     break
                 
-                record = structure_class.from_buffer_copy(buffer)
-                current_key = getattr(record, key_field_name)
-                
-                if current_key < last_key:
-                    print(f"  -> Erro de ordenação: Registro {count} (ID {current_key}) < Registro anterior (ID {last_key})")
-                    _log_operacao(f"Verificação falhou: '{filename}' está DESORDENADO.", "ERRO")
-                    return False
-                
-                last_key = current_key
-                count += 1
+                registro = struct_class.from_buffer_copy(buffer)
+                f_log.write(str(registro) + "\n")
+                contador += 1
             
-            print(f"  -> Verificação concluída: '{filename}' ({count} registros) está ordenado.")
-            _log_operacao(f"Verificação OK: '{filename}' está ordenado.", "INFO")
-            return True
-
+            f_log.write(f"\nTotal de registros: {contador}\n")
+            print(f"-> Sucesso. {contador} registros exportados.")
+            
     except FileNotFoundError:
-        print(f"  -> Aviso: Arquivo '{filename}' não encontrado para verificação.")
-        return False # Se não existe, não está ordenado
-    except Exception as e:
-        print(f"  -> Erro ao verificar ordenação de '{filename}': {e}")
-        return False
-    
-    
-def gerar_lote_aplicacoes_aleatorias(quantidade=1000, paciente_id_fixo=None):
-    # Gera registros de aplicações para debug
-    # Se paciente_id_fixo informado, gera todas as aplicações para este paciente.
-    
-    msg_target = f"para o Paciente {paciente_id_fixo}" if paciente_id_fixo else "para pacientes aleatórios"
-    print(f"Gerando {quantidade} aplicações aleatórias {msg_target}...")
-    
-    try:
-        # Descobrir os limites dos IDs existentes
-        if not os.path.exists(models.FILE_PACIENTES) or not os.path.exists(models.FILE_VACINAS) or not os.path.exists(models.FILE_FUNCIONARIOS):
-            return False, "Arquivos de dados principais não encontrados."
+        print(f"Erro: Arquivo {arquivo_bin} não encontrado.")
 
-        max_pac = os.path.getsize(models.FILE_PACIENTES) // models.RECORD_SIZE_PAC
-        max_vac = os.path.getsize(models.FILE_VACINAS) // models.RECORD_SIZE_VAC
-        max_func = os.path.getsize(models.FILE_FUNCIONARIOS) // models.RECORD_SIZE_FUNC
+# --- FUNÇÕES DE CRIAÇÃO DA BASE (POPULATE) ---
 
-        if max_pac == 0 or max_vac == 0 or max_func == 0:
-            return False, "As bases de dados estão vazias. Gere os dados principais primeiro."
-
-        # Passado um ID fixo: valida se está dentro do range
-        if paciente_id_fixo and (paciente_id_fixo < 1 or paciente_id_fixo > max_pac):
-            return False, f"ID de Paciente {paciente_id_fixo} é inválido (Máx: {max_pac})."
-
-        buffer = bytearray()
-        
-        # Próximo ID de aplicação
-        try:
-             next_id = (os.path.getsize(models.FILE_APLICACOES) // models.RECORD_SIZE_APLIC) + 1
-        except FileNotFoundError:
-             next_id = 1
-
-        for i in range(quantidade):
-            cod_app = next_id + i
-            
-            if paciente_id_fixo:
-                cod_pac = paciente_id_fixo
-            else:
-                cod_pac = random.randint(1, max_pac)
-                
-            cod_vac = random.randint(1, max_vac)
-            cod_func = random.randint(1, max_func)
-            
-            # Data aleatória
-            dia = random.randint(1, 28)
-            mes = random.randint(1, 12)
-            ano = random.randint(2020, 2025)
-            data_app = f"{dia:02d}/{mes:02d}/{ano}"
-
-            nova_app = models.AplicacaoVacina(
-                cod_app, cod_pac, cod_vac, cod_func, data_app.encode('utf-8')
+def gerar_base_funcionarios():
+    print(f"Gerando {models.FILE_FUNCIONARIOS_SIZE} Funcionários...")
+    with open(models.FILE_FUNCIONARIOS, "wb") as f:
+        for i in range(1, models.FILE_FUNCIONARIOS_SIZE + 1):
+            func = models.Funcionario(
+                cod=i,
+                nome=random.choice(NOMES),
+                cpf=f"{random.randint(100,999)}.000.000-00",
+                data_nascimento="01/01/1990",
+                salario=random.uniform(2000, 5000)
             )
-            buffer.extend(nova_app)
+            f.write(func)
 
-        # Escrever no disco
-        with open(models.FILE_APLICACOES, "ab") as f:
-            f.write(buffer)
+def gerar_base_pacientes():
+    print(f"Gerando {models.FILE_PACIENTES_SIZE} Pacientes...")
+    with open(models.FILE_PACIENTES, "wb") as f:
+        for i in range(1, models.FILE_PACIENTES_SIZE + 1):
+            pac = models.Paciente(
+                cod=i,
+                nome=random.choice(NOMES),
+                cpf=f"{random.randint(100,999)}.111.222-33",
+                data_nascimento="15/05/1985",
+                endereco="Rua Exemplo, 123"
+            )
+            f.write(pac)
+
+def gerar_base_vacinas():
+    print(f"Gerando {models.FILE_VACINAS_SIZE} Vacinas...")
+    with open(models.FILE_VACINAS, "wb") as f:
+        for i in range(1, models.FILE_VACINAS_SIZE + 1):
+            vac = models.Vacina(
+                cod=i,
+                nome_fabricante=random.choice(VACINAS),
+                lote=f"LOTE-{random.randint(1000,9999)}",
+                data_validade="31/12/2030",
+                descricao="Vacina Viral"
+            )
+            f.write(vac)
+
+def gerar_base_aplicacoes():
+    # Requer que as outras bases existam para simular FKs validas (opcional, aqui é aleatorio)
+    # * = Diferenças desta função para a da parte II
+    print(f"Gerando {models.FILE_APLICACOES_SIZE} Aplicações...")
+    # * inicialização do hashmap
+    utils_parte3.inicializar_hash_vazia()
+    with open(models.FILE_APLICACOES, "wb") as f:
+        # * abertura do arquivo de hashmap
+        with open(models.FILE_HASH, "rb+") as f_hash:
+            for i in range(1, models.FILE_APLICACOES_SIZE + 1):
+                app = models.AplicacaoVacina(
+                    cod=i,
+                    cod_pac=random.randint(1, 100),
+                    cod_vac=random.randint(1, 20),
+                    cod_func=random.randint(1, 100),
+                    data="20/01/2026"
+                )
+                f.write(app)
+                # * criar a base de aplicações também gera seu hashmap
+                utils_parte3.inserir_na_hash(i, i-1, f_hash)
+
+# Função Wrapper para rodar tudo
+def recriar_bases():
+    if os.path.isfile(models.FILE_APLICACOES):
+        print("Erro: As bases já existem!")
+    else:    
+        # Limpa log antigo
+        if os.path.exists(models.LOG_DUMP):
+            os.remove(models.LOG_DUMP)
+
+        # Gera Binários
+        gerar_base_funcionarios()
+        gerar_base_pacientes()
+        gerar_base_vacinas()
+        gerar_base_aplicacoes()
+
+        # Gera header
+        models.inicializar_header()
+        # Imprime no Log
+        exportar_base_para_log(models.FILE_FUNCIONARIOS, models.Funcionario, "FUNCIONÁRIOS")
+        exportar_base_para_log(models.FILE_PACIENTES, models.Paciente, "PACIENTES")
+        exportar_base_para_log(models.FILE_VACINAS, models.Vacina, "VACINAS")
+        exportar_base_para_log(models.FILE_APLICACOES, models.AplicacaoVacina, "APLICAÇÕES")
+
+# ================================================================================
+#                                   NOVAS FUNÇÕES 
+# ================================================================================
+
+def inserir_aplicacao(nova_app):
+    # Insere uma aplicação gerenciando manualmente o Header de espaços vazios.
+    
+    print(f"--- Inserindo Aplicação ID {nova_app.cod_aplicacao} ---")
+    
+    # 0. Garante que o Header existe (criação manual se não existir)
+    if not os.path.exists(models.FILE_HEADER):
+        with open(models.FILE_HEADER, "wb") as f_criacao:
+            h_init = models.Header(topo_pilha=-1)
+            f_criacao.write(h_init)
+
+    endereco_final = -1
+
+    # 1. Abrir e Ler o Header
+    # "rb+" pois pode precisar atualizar o topo depois
+    with open(models.FILE_HEADER, "rb+") as f_header:
+        # Ler o que há no header
+        f_header.seek(0)
+        header = models.Header.from_buffer_copy(f_header.read(ctypes.sizeof(models.Header)))
+        
+        # 2. Verificar se há espaço na Pilha de Excluídos
+        # se header for -1, ignora e escreve no fim
+        if header.topo_pilha != -1:
+            print(f"-> Header aponta para índice {header.topo_pilha}. Reutilizando espaço...")
             
-        _log_operacao(f"Geração em lote: {quantidade} aplicações inseridas ({msg_target}).", "INFO")
-        return True, f"{quantidade} aplicações geradas com sucesso!"
+            # --- Lógica de reutilização - pop no stack ---
+            endereco_reutilizado = header.topo_pilha
+            
+            with open(models.FILE_APLICACOES, "rb+") as f_dados:
+                # 3. Abrir arquivo de aplicações e ir até o registro que será sobrescrito
+                offset = endereco_reutilizado * models.RECORD_SIZE_APLIC
+                f_dados.seek(offset)
+                
+                # 4. Ler o ponteiro para o próximo
+                # O registro antigo guarda no campo 'cod_aplicacao' o próximo índice livre
+                buffer_lixo = f_dados.read(models.RECORD_SIZE_APLIC)
+                registro_lixo = models.AplicacaoVacina.from_buffer_copy(buffer_lixo)
+                proximo_na_pilha = registro_lixo.cod_aplicacao
+                
+                # Mudança vs lógica do desafio 5: O registro é propositalmente tratado como lixo 
+                # porque se o header aponta para cá, sabe-se que é lixo
+                
+                # Logo, se lê o código que estaria na estrutura "AplicacaoVacina" e o trata como o "endereçamento" do próximo bloco livre
+                # Isso continua até que o cod_aplicacao seja "-1"
 
-    except Exception as e:
-        msg = f"Erro na geração aleatória: {e}"
-        _log_operacao(msg, "ERRO")
-        print(msg)
-        return False, msg
+                # 5. Sobrescrever com o novo dado
+                f_dados.seek(offset)
+                f_dados.write(nova_app)
+            
+            # 6. Devolver ao header o que havia no registro
+            header.topo_pilha = proximo_na_pilha
+            
+            # Atualiza o arquivo header fisicamente
+            f_header.seek(0)
+            f_header.write(header)
+            
+            # 7. Endereço para inserção encontrado
+            endereco_final = endereco_reutilizado
+
+        else:
+            print("-> Header indica pilha vazia (-1). Inserindo no final (Append)...")
+            
+            # --- Lógida de append ao EOF Padrão ---
+            with open(models.FILE_APLICACOES, "ab") as f_dados_append:
+                # Pega a posição atual (fim do arquivo) para saber o índice
+                f_dados_append.seek(0, 2) # Fim
+                bytes_total = f_dados_append.tell()
+                endereco_final = bytes_total // models.RECORD_SIZE_APLIC
+                
+                f_dados_append.write(nova_app)
+                # O header não muda aqui, continua -1
+
+    # 8. Atualizar a Tabela Hash
+    # Chave -> Novo Endereço Físico
+    if endereco_final != -1:
+        print(f"-> Atualizando Hash: Chave {nova_app.cod_aplicacao} -> Endereço {endereco_final}")
+        with open(models.FILE_HASH, "rb+") as f_hash:
+            # A chave permanece a mesma que existia antes
+            utils_parte3.inserir_na_hash(nova_app.cod_aplicacao, endereco_final, f_hash)
+
+    # --- FLUXO DE INSERÇÃO ---
+    # 1. Abrir e Ler o Header
+    # 2. Verificar se há espaço na Pilha de Excluídos
+    # 3. Abrir arquivo de aplicações e ir até o registro que será sobrescrito
+    # 4. Ler o ponteiro para o próximo
+    # 5. Sobrescrever com o novo dado
+    # 6. Devolver ao header o que havia no registro
+    # 7. Endereço para inserção encontrado
+    # 8. Atualizar a Tabela Hash
+
+
+# Retorna None se não existe
+def buscar_aplicacao(id_busca):
+    print(f"--- Iniciando busca pelo ID: {id_busca} ---")
+    
+    endereco_fisico_encontrado = -1
+
+    # 1. Abre o arquivo de hash para consulta
+    with open(models.FILE_HASH, "rb") as f_hash:
+        # 2. Delega a lógica de busca (Linear Probing/Estados) para a função interna
+        # A função já retorna o endereço físico ou -1 se não encontrar
+        endereco_fisico_encontrado = utils_parte3.buscar_na_hash(id_busca, f_hash)
+
+    # 3. Verifica se o endereço físico foi encontrado
+    if endereco_fisico_encontrado != -1:
+        print(f"-> Registro encontrado! Endereço físico: {endereco_fisico_encontrado}")
+        
+        # 4. Acesso Direto ao Arquivo de Dados (Seek Direto)
+        with open(models.FILE_APLICACOES, "rb") as f_dados:
+            # 5. Calcula o deslocamento (offset) baseado no endereço recuperado
+            offset_dados = endereco_fisico_encontrado * ctypes.sizeof(models.AplicacaoVacina)
+            f_dados.seek(offset_dados)
+            
+            # 6. Lê e reconstrói o objeto AplicacaoVacina
+            buffer_dados = f_dados.read(ctypes.sizeof(models.AplicacaoVacina))
+            if buffer_dados:
+                return models.AplicacaoVacina.from_buffer_copy(buffer_dados)
+    
+    print(f"-> ID {id_busca} não localizado na base de dados.")
+    return None
+
+# --- FLUXO DA FUNÇÃO ---
+# 1. Abre arquivo de hash
+# 2. Delega busca para buscar_na_hash()
+# 3. Recebe o endereço físico (ou -1)
+# 4. Se encontrou, abre o arquivo de aplicações
+# 5. Realiza o seek direto no endereço físico
+# 6. Retorna o objeto encontrado
+
+def remover_aplicacao(id_busca):
+    print(f"--- Iniciando remoção do ID: {id_busca} ---")
+    
+    # 1. Localizar o endereço físico antes de remover do hash
+    # Precisa saber onde o dado está no .dat para poder marcar como livre
+    endereco_fisico = -1
+    with open(models.FILE_HASH, "rb") as f_hash_leitura:
+        # busca pelo proprio hashmap
+        endereco_fisico = utils_parte3.buscar_na_hash(id_busca, f_hash_leitura)
+    
+    if endereco_fisico == -1:
+        print(f"Erro: ID {id_busca} não encontrado na base.")
+        return False
+
+    # 2. Atualizar o Hashmap
+    # Abre o hashmap em modo de escrita para usar a função remover_da_hash
+    with open(models.FILE_HASH, "rb+") as f_hash_escrita:
+        sucesso_hash = utils_parte3.remover_da_hash(id_busca, f_hash_escrita)
+    
+    if not sucesso_hash:
+        return False
+
+    # 3. Gerenciamento de Espaço (Pilha de Excluídos)
+    # Rrealizar o Push deste endereço na pilha de vazios
+    
+    # 4. Abrir o Header para pegar o topo atual
+    if not os.path.exists(models.FILE_HEADER):
+        with open(models.FILE_HEADER, "wb") as f_init:
+            f_init.write(models.Header(topo_pilha=-1))
+
+    with open(models.FILE_HEADER, "rb+") as f_header:
+        f_header.seek(0)
+        header = models.Header.from_buffer_copy(f_header.read(ctypes.sizeof(models.Header)))
+        topo_antigo = header.topo_pilha
+        
+        # 5. Ir ao arquivo de aplicações e transformar o registro em um "nó" da pilha
+        with open(models.FILE_APLICACOES, "rb+") as f_dados:
+            offset = endereco_fisico * ctypes.sizeof(models.AplicacaoVacina)
+            f_dados.seek(offset)
+            
+            # 6. Criar um registro vazio onde o ID armazena o "endereço" para o próximo buraco
+            registro_vazio = models.AplicacaoVacina()
+            registro_vazio.cod_aplicacao = topo_antigo # O campo cod vira o ponteiro de endereço
+            registro_vazio.cod_funcionario_fk = 0
+            registro_vazio.cod_paciente_fk = 0
+            registro_vazio.cod_vacina_fk = 0
+            # Zera todos os registros para identificar que é um registro vazio
+            
+            f_dados.write(registro_vazio)
+            
+        # 7. Atualizar o Header para que o novo buraco seja o topo
+        header.topo_pilha = endereco_fisico
+        f_header.seek(0)
+        f_header.write(header)
+
+    print(f"-> Sucesso: Espaço no índice {endereco_fisico} liberado e adicionado à pilha.")
+    return True
+
+# --- FLUXO DE REMOÇÃO ---
+# 1. Localizar o endereço físico antes de remover do hash
+# 2. Atualizar o Hashmap
+# 3. Gerenciamento de Espaço (Pilha de Excluídos)
+# 4. Abrir o Header para pegar o topo atual
+# 5. Ir ao arquivo de aplicações e transformar o registro em um "nó" da pilha
+# 6. Criar um registro vazio onde o ID armazena o "endereço" para o próximo buraco
+# 7. Atualizar o Header para que o novo buraco seja o topo
+

@@ -1,0 +1,294 @@
+
+========================================
+RELATÓRIO: FUNCIONÁRIOS
+========================================
+ID: 1 | Nome: Bruno
+ID: 2 | Nome: Bruno
+ID: 3 | Nome: Fernanda
+ID: 4 | Nome: Helena
+ID: 5 | Nome: Eduardo
+ID: 6 | Nome: Carlos
+ID: 7 | Nome: Gabriel
+ID: 8 | Nome: Eduardo
+ID: 9 | Nome: Fernanda
+ID: 10 | Nome: Daniela
+ID: 11 | Nome: Ana
+ID: 12 | Nome: Fernanda
+ID: 13 | Nome: Gabriel
+ID: 14 | Nome: Fernanda
+ID: 15 | Nome: Daniela
+ID: 16 | Nome: Ana
+ID: 17 | Nome: Eduardo
+ID: 18 | Nome: Ana
+ID: 19 | Nome: Ana
+ID: 20 | Nome: Daniela
+ID: 21 | Nome: Eduardo
+ID: 22 | Nome: Fernanda
+ID: 23 | Nome: Bruno
+ID: 24 | Nome: Fernanda
+ID: 25 | Nome: Bruno
+ID: 26 | Nome: Ana
+ID: 27 | Nome: Bruno
+ID: 28 | Nome: Gabriel
+ID: 29 | Nome: Gabriel
+ID: 30 | Nome: Fernanda
+ID: 31 | Nome: Helena
+ID: 32 | Nome: Daniela
+ID: 33 | Nome: Ana
+ID: 34 | Nome: Helena
+ID: 35 | Nome: Fernanda
+ID: 36 | Nome: Ana
+ID: 37 | Nome: Daniela
+ID: 38 | Nome: Fernanda
+ID: 39 | Nome: Carlos
+ID: 40 | Nome: Carlos
+ID: 41 | Nome: Eduardo
+ID: 42 | Nome: Fernanda
+ID: 43 | Nome: Ana
+ID: 44 | Nome: Gabriel
+ID: 45 | Nome: Carlos
+ID: 46 | Nome: Gabriel
+ID: 47 | Nome: Gabriel
+ID: 48 | Nome: Carlos
+ID: 49 | Nome: Bruno
+ID: 50 | Nome: Helena
+
+Total de registros: 50
+
+========================================
+RELATÓRIO: PACIENTES
+========================================
+ID: 1 | Nome: Bruno
+ID: 2 | Nome: Eduardo
+ID: 3 | Nome: Daniela
+ID: 4 | Nome: Ana
+ID: 5 | Nome: Gabriel
+ID: 6 | Nome: Eduardo
+ID: 7 | Nome: Gabriel
+ID: 8 | Nome: Helena
+ID: 9 | Nome: Helena
+ID: 10 | Nome: Daniela
+ID: 11 | Nome: Eduardo
+ID: 12 | Nome: Carlos
+ID: 13 | Nome: Helena
+ID: 14 | Nome: Fernanda
+ID: 15 | Nome: Daniela
+ID: 16 | Nome: Bruno
+ID: 17 | Nome: Ana
+ID: 18 | Nome: Daniela
+ID: 19 | Nome: Carlos
+ID: 20 | Nome: Ana
+ID: 21 | Nome: Fernanda
+ID: 22 | Nome: Eduardo
+ID: 23 | Nome: Fernanda
+ID: 24 | Nome: Eduardo
+ID: 25 | Nome: Daniela
+ID: 26 | Nome: Ana
+ID: 27 | Nome: Fernanda
+ID: 28 | Nome: Gabriel
+ID: 29 | Nome: Eduardo
+ID: 30 | Nome: Helena
+ID: 31 | Nome: Gabriel
+ID: 32 | Nome: Bruno
+ID: 33 | Nome: Daniela
+ID: 34 | Nome: Gabriel
+ID: 35 | Nome: Bruno
+ID: 36 | Nome: Ana
+ID: 37 | Nome: Gabriel
+ID: 38 | Nome: Gabriel
+ID: 39 | Nome: Ana
+ID: 40 | Nome: Daniela
+ID: 41 | Nome: Ana
+ID: 42 | Nome: Ana
+ID: 43 | Nome: Bruno
+ID: 44 | Nome: Ana
+ID: 45 | Nome: Bruno
+ID: 46 | Nome: Fernanda
+ID: 47 | Nome: Daniela
+ID: 48 | Nome: Bruno
+ID: 49 | Nome: Ana
+ID: 50 | Nome: Bruno
+ID: 51 | Nome: Daniela
+ID: 52 | Nome: Ana
+ID: 53 | Nome: Carlos
+ID: 54 | Nome: Helena
+ID: 55 | Nome: Bruno
+ID: 56 | Nome: Fernanda
+ID: 57 | Nome: Bruno
+ID: 58 | Nome: Helena
+ID: 59 | Nome: Ana
+ID: 60 | Nome: Eduardo
+ID: 61 | Nome: Fernanda
+ID: 62 | Nome: Helena
+ID: 63 | Nome: Helena
+ID: 64 | Nome: Carlos
+ID: 65 | Nome: Fernanda
+ID: 66 | Nome: Eduardo
+ID: 67 | Nome: Fernanda
+ID: 68 | Nome: Helena
+ID: 69 | Nome: Ana
+ID: 70 | Nome: Fernanda
+ID: 71 | Nome: Bruno
+ID: 72 | Nome: Ana
+ID: 73 | Nome: Fernanda
+ID: 74 | Nome: Fernanda
+ID: 75 | Nome: Bruno
+ID: 76 | Nome: Bruno
+ID: 77 | Nome: Eduardo
+ID: 78 | Nome: Carlos
+ID: 79 | Nome: Fernanda
+ID: 80 | Nome: Eduardo
+ID: 81 | Nome: Eduardo
+ID: 82 | Nome: Gabriel
+ID: 83 | Nome: Bruno
+ID: 84 | Nome: Helena
+ID: 85 | Nome: Daniela
+ID: 86 | Nome: Gabriel
+ID: 87 | Nome: Eduardo
+ID: 88 | Nome: Gabriel
+ID: 89 | Nome: Daniela
+ID: 90 | Nome: Helena
+ID: 91 | Nome: Carlos
+ID: 92 | Nome: Eduardo
+ID: 93 | Nome: Gabriel
+ID: 94 | Nome: Ana
+ID: 95 | Nome: Eduardo
+ID: 96 | Nome: Helena
+ID: 97 | Nome: Carlos
+ID: 98 | Nome: Eduardo
+ID: 99 | Nome: Gabriel
+ID: 100 | Nome: Ana
+
+Total de registros: 100
+
+========================================
+RELATÓRIO: VACINAS
+========================================
+ID: 1 | Fab: Coronavac
+ID: 2 | Fab: AstraZeneca
+ID: 3 | Fab: Janssen
+ID: 4 | Fab: Pfizer
+ID: 5 | Fab: AstraZeneca
+ID: 6 | Fab: Coronavac
+ID: 7 | Fab: Janssen
+ID: 8 | Fab: Janssen
+ID: 9 | Fab: Coronavac
+ID: 10 | Fab: Janssen
+ID: 11 | Fab: Janssen
+ID: 12 | Fab: Pfizer
+ID: 13 | Fab: Pfizer
+ID: 14 | Fab: AstraZeneca
+ID: 15 | Fab: AstraZeneca
+ID: 16 | Fab: Pfizer
+ID: 17 | Fab: AstraZeneca
+ID: 18 | Fab: Pfizer
+ID: 19 | Fab: Coronavac
+ID: 20 | Fab: Janssen
+
+Total de registros: 20
+
+========================================
+RELATÓRIO: APLICAÇÕES
+========================================
+ID App: 1 | Pac: 31 | Vac: 17
+ID App: 2 | Pac: 50 | Vac: 10
+ID App: 3 | Pac: 51 | Vac: 3
+ID App: 4 | Pac: 61 | Vac: 10
+ID App: 5 | Pac: 5 | Vac: 5
+ID App: 6 | Pac: 80 | Vac: 10
+ID App: 7 | Pac: 69 | Vac: 10
+ID App: 8 | Pac: 5 | Vac: 14
+ID App: 9 | Pac: 51 | Vac: 9
+ID App: 10 | Pac: 23 | Vac: 14
+ID App: 11 | Pac: 10 | Vac: 4
+ID App: 12 | Pac: 98 | Vac: 10
+ID App: 13 | Pac: 74 | Vac: 8
+ID App: 14 | Pac: 3 | Vac: 13
+ID App: 15 | Pac: 3 | Vac: 7
+ID App: 16 | Pac: 95 | Vac: 13
+ID App: 17 | Pac: 54 | Vac: 3
+ID App: 18 | Pac: 80 | Vac: 17
+ID App: 19 | Pac: 81 | Vac: 15
+ID App: 20 | Pac: 60 | Vac: 1
+ID App: 21 | Pac: 38 | Vac: 11
+ID App: 22 | Pac: 32 | Vac: 19
+ID App: 23 | Pac: 60 | Vac: 17
+ID App: 24 | Pac: 45 | Vac: 8
+ID App: 25 | Pac: 69 | Vac: 5
+ID App: 26 | Pac: 92 | Vac: 15
+ID App: 27 | Pac: 99 | Vac: 7
+ID App: 28 | Pac: 7 | Vac: 5
+ID App: 29 | Pac: 93 | Vac: 11
+ID App: 30 | Pac: 50 | Vac: 19
+ID App: 31 | Pac: 2 | Vac: 9
+ID App: 32 | Pac: 21 | Vac: 8
+ID App: 33 | Pac: 100 | Vac: 17
+ID App: 34 | Pac: 73 | Vac: 16
+ID App: 35 | Pac: 42 | Vac: 4
+ID App: 36 | Pac: 32 | Vac: 9
+ID App: 37 | Pac: 48 | Vac: 8
+ID App: 38 | Pac: 27 | Vac: 10
+ID App: 39 | Pac: 29 | Vac: 11
+ID App: 40 | Pac: 24 | Vac: 12
+ID App: 41 | Pac: 16 | Vac: 11
+ID App: 42 | Pac: 90 | Vac: 15
+ID App: 43 | Pac: 74 | Vac: 9
+ID App: 44 | Pac: 39 | Vac: 20
+ID App: 45 | Pac: 81 | Vac: 2
+ID App: 46 | Pac: 16 | Vac: 9
+ID App: 47 | Pac: 68 | Vac: 7
+ID App: 48 | Pac: 50 | Vac: 4
+ID App: 49 | Pac: 90 | Vac: 15
+ID App: 50 | Pac: 34 | Vac: 19
+ID App: 51 | Pac: 31 | Vac: 9
+ID App: 52 | Pac: 95 | Vac: 7
+ID App: 53 | Pac: 70 | Vac: 2
+ID App: 54 | Pac: 20 | Vac: 5
+ID App: 55 | Pac: 66 | Vac: 10
+ID App: 56 | Pac: 74 | Vac: 10
+ID App: 57 | Pac: 73 | Vac: 14
+ID App: 58 | Pac: 37 | Vac: 19
+ID App: 59 | Pac: 73 | Vac: 11
+ID App: 60 | Pac: 87 | Vac: 17
+ID App: 61 | Pac: 25 | Vac: 4
+ID App: 62 | Pac: 2 | Vac: 3
+ID App: 63 | Pac: 32 | Vac: 9
+ID App: 64 | Pac: 76 | Vac: 19
+ID App: 65 | Pac: 92 | Vac: 3
+ID App: 66 | Pac: 47 | Vac: 17
+ID App: 67 | Pac: 93 | Vac: 3
+ID App: 68 | Pac: 44 | Vac: 15
+ID App: 69 | Pac: 43 | Vac: 8
+ID App: 70 | Pac: 78 | Vac: 12
+ID App: 71 | Pac: 90 | Vac: 16
+ID App: 72 | Pac: 99 | Vac: 13
+ID App: 73 | Pac: 33 | Vac: 11
+ID App: 74 | Pac: 75 | Vac: 5
+ID App: 75 | Pac: 75 | Vac: 20
+ID App: 76 | Pac: 30 | Vac: 1
+ID App: 77 | Pac: 85 | Vac: 6
+ID App: 78 | Pac: 89 | Vac: 8
+ID App: 79 | Pac: 31 | Vac: 5
+ID App: 80 | Pac: 55 | Vac: 8
+ID App: 81 | Pac: 84 | Vac: 14
+ID App: 82 | Pac: 21 | Vac: 5
+ID App: 83 | Pac: 52 | Vac: 14
+ID App: 84 | Pac: 26 | Vac: 15
+ID App: 85 | Pac: 26 | Vac: 3
+ID App: 86 | Pac: 63 | Vac: 14
+ID App: 87 | Pac: 99 | Vac: 12
+ID App: 88 | Pac: 52 | Vac: 2
+ID App: 89 | Pac: 85 | Vac: 20
+ID App: 90 | Pac: 30 | Vac: 20
+ID App: 91 | Pac: 85 | Vac: 16
+ID App: 92 | Pac: 78 | Vac: 20
+ID App: 93 | Pac: 48 | Vac: 4
+ID App: 94 | Pac: 62 | Vac: 20
+ID App: 95 | Pac: 48 | Vac: 12
+ID App: 96 | Pac: 45 | Vac: 14
+ID App: 97 | Pac: 61 | Vac: 12
+ID App: 98 | Pac: 3 | Vac: 19
+ID App: 99 | Pac: 21 | Vac: 20
+ID App: 100 | Pac: 82 | Vac: 7
+
+Total de registros: 100
